@@ -25,6 +25,13 @@ export default async (req, res) => {
             author: REPO_OWNER,
         });
 
+        const repo = await octokit.rest.repos.get({
+            owner: REPO_OWNER,
+            repo: REPO_NAME,
+        });
+        console.log(repo.data);
+
+
         if (commits.length > 15) {
             return res.status(200).send("✅ Commit(s) already exist today. No action taken.");
         }
