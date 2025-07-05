@@ -50,7 +50,8 @@ export default async (req, res) => {
             committer: { name: "Auto Bot", email: "bot@example.com" },
             author: { name: "Auto Bot", email: "bot@example.com" },
         });
-
+        console.log("✅ Auto-commit successful!");
+        console.log("🔗 Commit URL:", response.data.commit.html_url);
         return res.status(201).send("✅ Auto commit created.");
     } catch (err) {
         console.error("❌ Error:", err);
