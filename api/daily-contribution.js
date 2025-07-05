@@ -1,9 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import dotenv from "dotenv";
 
-if (process.env.NODE_ENV !== "production") {
-    dotenv.config();
-}
+dotenv.config();
 
 const GH_TOKEN = process.env.GH_TOKEN;
 const REPO_OWNER = process.env.REPO_OWNER;
@@ -18,11 +16,11 @@ export default async (req, res) => {
             new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
         ).toISOString().slice(0, 10);
 
-        const { data: commits } = await octokit.repos.listCommits({
+        // Get today's commits
+        const { data: commits } = await octokit.rest.repos.listCommits({
             owner: REPO_OWNER,
             repo: REPO_NAME,
             since: `${today}T00:00:00+05:30`,
-            // until: `${today}T23:59:59+05:30`,
             until: `${today}T20:39:59+05:30`,
             author: REPO_OWNER,
         });
@@ -31,25 +29,38 @@ export default async (req, res) => {
             return res.status(200).send("✅ Commit(s) already exist today. No action taken.");
         }
 
-        const { data: fileData } = await octokit.repos.getContent({
-            owner: REPO_OWNER,
-            repo: REPO_NAME,
-            path: FILE_PATH,
-        });
+        let oldContent = "";
+        let sha = undefined;
 
-        const oldContent = Buffer.from(fileData.content, "base64").toString();
+        // Try to fetch the file; if it doesn't exist, we'll create it
+        try {
+            const { data: fileData } = await octokit.rest.repos.getContent({
+                owner: REPO_OWNER,
+                repo: REPO_NAME,
+                path: FILE_PATH,
+            });
+            oldContent = Buffer.from(fileData.content, "base64").toString();
+            sha = fileData.sha;
+        } catch (err) {
+            // If file not found, we'll create it fresh
+            if (err.status !== 404) {
+                throw err;
+            }
+        }
+
         const newContent = oldContent + `\nAuto commit at ${new Date().toISOString()}`;
 
-        await octokit.repos.createOrUpdateFileContents({
+        const response = await octokit.rest.repos.createOrUpdateFileContents({
             owner: REPO_OWNER,
             repo: REPO_NAME,
             path: FILE_PATH,
             message: `🤖 Auto commit for ${today}`,
             content: Buffer.from(newContent).toString("base64"),
-            sha: fileData.sha,
+            sha, // If undefined, creates new file
             committer: { name: "Auto Bot", email: "bot@example.com" },
             author: { name: "Auto Bot", email: "bot@example.com" },
         });
+
         console.log("✅ Auto-commit successful!");
         console.log("🔗 Commit URL:", response.data.commit.html_url);
         return res.status(201).send("✅ Auto commit created.");
