@@ -27,7 +27,7 @@ export default async (req, res) => {
             author: REPO_OWNER,
         });
 
-        if (commits.length > 0) {
+        if (commits.length > 15) {
             return res.status(200).send("✅ Commit(s) already exist today. No action taken.");
         }
 
