@@ -1,0 +1,8 @@
+{
+    "functions": {
+        "api/daily-contribution.js": {
+            "runtime": "nodejs18.x",
+            "schedule": "10 15 * * *"
+        }
+    }
+}
