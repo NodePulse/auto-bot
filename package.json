@@ -1,0 +1,17 @@
+{
+  "name": "auto-commit-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api/daily-contribution.js",
+  "scripts": {
+    "start": "node api/daily-contribution.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@octokit/rest": "^22.0.0",
+    "dotenv": "^17.0.1"
+  }
+}
