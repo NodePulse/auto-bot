@@ -1,8 +1,8 @@
 {
-    "functions": {
-        "api/daily-contribution.js": {
-            "runtime": "nodejs18.x",
+    "crons": [
+        {
+            "path": "/api/daily-contribution",
             "schedule": "10 15 * * *"
         }
-    }
+    ]
 }
