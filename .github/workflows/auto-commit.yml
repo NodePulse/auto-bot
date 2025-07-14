@@ -1,0 +1,25 @@
+name: Daily Auto Commit               # 🔹 Name of the workflow shown on GitHub Actions tab
+on:                                   # 🔹 Event that triggers this workflow
+  schedule:                           # 🔹 Schedules it to run automatically
+    - cron: '20 11 * * *'              # 🔹 Runs at 5:00 PM UTC every day (i.e. 10:30 PM IST)
+  workflow_dispatch:                  # 🔹 Allows you to trigger it manually too
+jobs:                                 # 🔹 Defines what this workflow does
+  auto-commit:                        # 🔹 Job name
+    runs-on: ubuntu-latest            # 🔹 Use latest Ubuntu runner for GitHub Actions
+    steps:                            # 🔹 List of all steps to run in this job
+      - name: Checkout repo
+        uses: actions/checkout@v3     # ✅ Pulls your GitHub repo code into the workflow
+      - name: Make a change
+        run: |                        # 🔹 Multi-line bash command
+          echo "✅ Auto commit at $(date)" >> auto_commit.txt  
+          # ✅ Appends timestamp to a file (creates one if it doesn't exist)
+      - name: Commit changes
+        run: |
+          git config --local user.name "NodePulse"                    
+          git config --local user.email "bharbeysachin@gmail.com"      
+          # ✅ Set your GitHub name & email so the commit shows as *you*
+          git add .                                              
+          git commit -m "🤖 Auto commit on $(date)" || echo "No changes to commit"
+          # ✅ If there's a change, commit. If not, print a message (to avoid failure)
+          git push                                               
+          # ✅ Push the commit to your repo (main branch)
