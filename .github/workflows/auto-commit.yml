@@ -2,28 +2,24 @@ name: Daily Auto Commit
 
 on:
   schedule:
-    - cron: '26 11 * * *'       # ⏰ 4:56 PM IST (11:26 AM UTC)
+    - cron: '40 11 * * *'       # ⏰ 4:56 PM IST (11:26 AM UTC)
   workflow_dispatch:            # ▶️ Optional: run manually
 
 permissions:
   contents: write               # ✅ Needed to push changes
 
 jobs:
-  auto-commit:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Make a change
+      - name: Run script
         run: |
-          echo "✅ Auto commit at $(date)" >> auto_commit.txt
-
-      - name: Commit changes
-        run: |
-          git config --local user.name "YourGitHubUsername"
-          git config --local user.email "your_verified_email@example.com"
-          git add .
-          git commit -m "🤖 Auto commit on $(date)" || echo "Nothing to commit"
+          echo " " >> README.md
+          git config user.name "NodePulse"
+          git config user.email "bharbeysachin@gmail.com"
+          git add README.md
+          git commit -m "Always green!"
           git push
