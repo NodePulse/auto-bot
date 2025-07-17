@@ -2,24 +2,37 @@ name: Daily Auto Commit
 
 on:
   schedule:
-    - cron: '40 11 * * *'       # ⏰ 4:56 PM IST (11:26 AM UTC)
-  workflow_dispatch:            # ▶️ Optional: run manually
+    - cron: '0 14 * * *'       # ⏰ 7:30 PM IST (14:00 UTC)
+  workflow_dispatch:            # ▶️ Manual trigger
 
 permissions:
   contents: write               # ✅ Needed to push changes
 
 jobs:
-  build:
+  auto-commit:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Run script
+      - name: Make random number of commits
         run: |
-          echo " " >> README.md
-          git config user.name "NodePulse"
-          git config user.email "bharbeysachin@gmail.com"
-          git add README.md
-          git commit -m "Always green!"
+          git config --global user.name "NodePulse"
+          git config --global user.email "bharbeysachin@gmail.com"
+
+          # Generate weighted random number of commits
+          COMMITS=$(python3 -c "import random; print(random.choices(
+              population=[1,2,3,4,5,6,7,8,9],
+              weights=[15,15,15,10,10,10,10,8,7])[0])")
+
+          echo "🟢 Making $COMMITS commits today..."
+
+          for i in $(seq 1 $COMMITS); do
+            echo "Commit #$i" >> README.md
+            git add README.md
+            git commit -m "Daily update: commit $i of $COMMITS"
+            sleep 1  # Optional: simulate realistic timing
+          done
+
           git push
