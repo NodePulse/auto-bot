@@ -24,7 +24,7 @@ jobs:
           # Generate weighted random number of commits
           COMMITS=$(python3 -c "import random; print(random.choices(
               population=[1,2,3,4,5,6,7,8,9],
-              weights=[15,15,15,10,10,10,10,8,7])[0])")
+              weights=[25,25,20,15,5,4,3,2,1])[0])")
 
           echo "🟢 Making $COMMITS commits today..."
 
